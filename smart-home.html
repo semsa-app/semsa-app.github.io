@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Semsa AI | Smart Home</title>
+  <meta name="description" content="Semsa AI smart home guide for Shelly Wi-Fi devices, app setup, widget control, and voice control.">
+  <style>
+    :root {
+      --bg: #070706;
+      --panel: rgba(20, 18, 14, 0.84);
+      --panel-strong: rgba(31, 27, 20, 0.96);
+      --gold: #d8bd69;
+      --gold-soft: #f1dd99;
+      --text: #faf4e4;
+      --muted: #cdbf9b;
+      --line: rgba(216, 189, 105, 0.28);
+      --line-strong: rgba(241, 221, 153, 0.5);
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.48);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(216, 189, 105, 0.16), transparent 26rem),
+        radial-gradient(circle at 80% 10%, rgba(241, 221, 153, 0.08), transparent 18rem),
+        linear-gradient(145deg, #040403 0%, #0d0c09 48%, #070706 100%);
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--gold-soft);
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+      padding: 4px 2px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mark {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, rgba(241, 221, 153, 0.2), rgba(216, 189, 105, 0.08));
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.05rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .nav a,
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--text);
+      text-decoration: none;
+      background: rgba(31, 27, 20, 0.72);
+      backdrop-filter: blur(8px);
+    }
+
+    .button.primary,
+    .nav a.primary {
+      color: #141008;
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-copy {
+      padding: clamp(26px, 4vw, 48px);
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--gold-soft);
+      font-size: 0.86rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(2.8rem, 6vw, 5.8rem);
+      line-height: 0.92;
+      letter-spacing: -0.05em;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .hero-aside {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(24, 21, 16, 0.88);
+      padding: 18px;
+    }
+
+    .mini-card h3 {
+      margin: 0 0 10px;
+      color: var(--gold-soft);
+      font-size: 1.05rem;
+    }
+
+    .mini-card p,
+    .mini-card li {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.98rem;
+    }
+
+    .mini-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .section {
+      margin-top: 18px;
+      padding: clamp(24px, 4vw, 36px);
+    }
+
+    .section h3 {
+      margin: 0 0 10px;
+      font-size: 1.7rem;
+      letter-spacing: -0.03em;
+    }
+
+    .section p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    figure {
+      margin: 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel-strong);
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 18px;
+      object-fit: cover;
+      background: #111;
+    }
+
+    figcaption {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.5;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      background: rgba(24, 21, 16, 0.84);
+    }
+
+    .step span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+      color: #171209;
+      font-weight: 700;
+    }
+
+    .step h4 {
+      margin: 0 0 10px;
+      font-size: 1.12rem;
+      color: var(--text);
+    }
+
+    .step p,
+    .step li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .step ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .notice {
+      margin-top: 18px;
+      border: 1px solid var(--line-strong);
+      border-radius: 22px;
+      background: rgba(216, 189, 105, 0.08);
+      padding: 18px 20px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 18px;
+      padding: 24px 6px 0;
+      color: rgba(250, 244, 228, 0.62);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .gallery,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <img src="semsa_icon.png" alt="">
+        </div>
+        <div>
+          <h1>Semsa AI</h1>
+          <p>Smart home guide for Shelly Wi-Fi devices</p>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="index.html" class="primary">Back to App</a>
+        <a href="#smart-home">Smart Home</a>
+        <a href="#setup">How it works</a>
+        <a href="#screenshots">Screenshots</a>
+        <a class="primary" href="https://play.google.com/store/apps/details?id=com.semsa.ai">Open App</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <article class="panel hero-copy" id="smart-home">
+        <p class="eyebrow">Local control, simple setup</p>
+        <h2>Smart Home</h2>
+        <p class="lead">
+          Semsa includes a Smart Home tool for controlling supported Shelly Wi-Fi devices.
+          You can manage lights manually from the widget or use voice control inside the app.
+        </p>
+        <div class="actions">
+          <a class="button primary" href="#setup">How to connect</a>
+          <a class="button" href="#screenshots">See screenshots</a>
+          <a class="button" href="index.html">Back to app page</a>
+        </div>
+      </article>
+
+      <aside class="panel hero-aside">
+        <div class="mini-card">
+          <h3>What is supported</h3>
+          <ul>
+            <li>Only Shelly products with Wi-Fi support</li>
+            <li>No Bluetooth-only devices yet</li>
+            <li>Manual widget control</li>
+            <li>Voice control through Semsa tools</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <h3>Quick summary</h3>
+          <p>
+            Put the Shelly device into AP / Wi-Fi setup mode, connect it to your home Wi-Fi
+            in the app, save it, then control it from the widget or by voice.
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="panel section" id="screenshots">
+      <h3>Screenshots</h3>
+      <p>
+        These two images show the widget view and the Smart Home settings screen inside the app.
+      </p>
+      <div class="gallery">
+        <figure>
+          <img src="Screenshot_20260630_145057.jpg" alt="Semsa smart home widget controlling a light and brightness">
+          <figcaption>
+            Widget view for quick light control. This is the place for fast manual actions.
+          </figcaption>
+        </figure>
+        <figure>
+          <img src="Screenshot_20260630_144956.jpg" alt="Semsa Smart Home settings screen with saved Shelly device">
+          <figcaption>
+            Smart Home settings. Add a Shelly device, save it, and keep it ready for use.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="panel section" id="setup">
+      <h3>How to connect a Shelly device</h3>
+      <p>
+        Use this flow when adding a new light or other Shelly device to Semsa.
+      </p>
+      <div class="steps">
+        <article class="step">
+          <span>1</span>
+          <h4>Put the device into Wi-Fi setup mode</h4>
+          <p>
+            Switch the Shelly device off and on twice, so it enters the API / Wi-Fi mode.
+            In this mode it starts its setup network and becomes discoverable.
+          </p>
+        </article>
+        <article class="step">
+          <span>2</span>
+          <h4>Find the device in Semsa</h4>
+          <p>
+            Open Smart Home in the app and search for the device while it is broadcasting its setup Wi-Fi.
+          </p>
+        </article>
+        <article class="step">
+          <span>3</span>
+          <h4>Enter your home Wi-Fi</h4>
+          <p>
+            Choose your home Wi-Fi network and type the password so the Shelly device can join your network.
+          </p>
+        </article>
+        <article class="step">
+          <span>4</span>
+          <h4>Save and control it</h4>
+          <p>
+            Save the device and then use the widget or voice control to turn lights on and off,
+            adjust brightness, and run smart home actions.
+          </p>
+        </article>
+      </div>
+
+      <div class="notice">
+        At the moment we support only Shelly devices with Wi-Fi capability. Bluetooth-only devices are not included yet.
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h3>Page links</h3>
+      <p>
+        This page can always return to <a href="index.html">index.html</a>.
+        The app link above points to the main Semsa app listing, so the YouTube link can stay on the app side where you already have it.
+      </p>
+    </section>
+
+    <footer class="footer">
+      <p>Semsa AI. Smart home guide for Shelly Wi-Fi devices.</p>
+    </footer>
+  </main>
+</body>
+</html>
